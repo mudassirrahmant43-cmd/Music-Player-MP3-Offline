@@ -1,62 +1,86 @@
-# Fossify Music Player
+# Music Player: MP3 & Offline
 
-<img alt="Logo" src="graphics/icon.webp" width="120" />
+A sleek, independently branded local music player for Android with offline playback, powerful equalizer, custom playlists, modern adaptive design, and Google Play Premium subscriptions.
 
-<a href='https://play.google.com/store/apps/details?id=org.fossify.musicplayer'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height=80/></a> <a href="https://f-droid.org/packages/org.fossify.musicplayer/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg" alt="Get it on F-Droid" height=80/></a> <a href="https://apt.izzysoft.de/fdroid/index/apk/org.fossify.musicplayer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height=80/></a>
+---
 
-Introducing Fossify Music Player – your gateway to uninterrupted musical enjoyment. Say goodbye to intrusive ads and hello to a seamless music experience
-designed to accompany you wherever you go.
+## Features
 
-**🚫 AD-FREE LISTENING:**  
-We understand the value of your time and the sanctity of your music experience. That's why Fossify Music Player is completely ad-free. No distractions, just
-pure musical bliss. Whether you're at home, on the go, or exploring the great outdoors, enjoy your music without interruptions.
+- **Offline Local Audio Playback**: Plays local MP3, FLAC, WAV, AAC, and OGG files directly on device.
+- **Powerful Equalizer & Preset Manager**: Adjust audio frequencies, bass boost, and sound effects.
+- **Sleep Timer**: Gentle fade-out timer for relaxing nights.
+- **Playlist & Library Management**: Organize songs by Tracks, Albums, Artists, Genres, and Folders.
+- **Lock-screen & Notification Controls**: Integrated AndroidX Media3 session controls.
+- **Custom Themes & Dark Mode**: Modern dark/light interface with adaptive color schemes.
+- **Non-Intrusive Bottom Banner Ad Integration**: A compact bottom banner ad powered by Google Mobile Ads (AdMob) for free users.
+- **Premium Subscriptions**: Option to remove bottom banner ads via Monthly or Yearly subscription plans.
 
-**📶 OFFLINE ACCESS:**  
-Take your music with you wherever you go, even to Mars. Fossify Music Player operates offline, ensuring you can enjoy your favorite tracks anytime, anywhere,
-without needing an internet connection.
+---
 
-**🚀 LIGHTNING-FAST AND EFFICIENT:**  
-Worried about draining your battery while indulging in your favorite tunes? Despite its rich features, Fossify Music Player maintains a small app size, ensuring
-quick and hassle-free download and installation. Experience swift navigation and seamless performance while indulging in your favorite melodies.
+## Premium Subscription Architecture & Google Play Billing
 
-**🎚️ POWERFUL EQUALIZER:**  
-Elevate your listening experience with our powerful equalizer, offering a range of presets to suit every genre and audio preference. Adjust the music effects
-based on your mood, genre, or even your audio setup for an immersive sound experience.
+The application implements a secure, single-source-of-truth entitlement architecture (`PremiumManager`) integrated with Google Play Billing (`BillingHelper`).
 
-**🌙 SLEEP TIMER FOR RELAXING NIGHTS:**  
-Soothe your nights with the Sleep Timer feature. Choose your favorite tunes and let them gently fade away as you drift off to sleep. Enjoy a peaceful night's
-rest without worrying about the music playing on.
+### Subscription Product Config
 
-**📜 PLAYLIST MANAGEMENT:**  
-Create and manage your playlists effortlessly. Organize your music library, customize track labels, and even edit song information to your liking. Shuffle,
-repeat, skip, and forward your tracks with ease.
+| Plan | Product ID | Target Price (PKR) | Value Highlight |
+|---|---|---|---|
+| **Free** | N/A | PKR 0 | Displays bottom banner ad; full music playback features available |
+| **Premium Monthly** | `premium_monthly` | PKR 150 / month | Removes bottom banner ad completely |
+| **Premium Yearly** | `premium_yearly` | PKR 1,260 / year | **SAVE 30%** compared to monthly plan |
 
-**🔒 PRIVACY ASSURED:**  
-Your privacy is our top priority. Fossify Music Player does not collect or share any user information with third parties. Enjoy peace of mind knowing that your
-the musical journey remains private and secure.
+### Single Source of Truth (`PremiumManager`)
 
-**🌈 MODERN DESIGN & USER-FRIENDLY INTERFACE:**  
-Enjoy a clean, modern design with a user-friendly interface. The app features a material design and a dark theme option, providing a visually appealing and
-comfortable user experience.
+- `PremiumManager` manages active entitlement state using `StateFlow<Boolean>` for reactive UI updates.
+- When Premium is active, `AdHelper` automatically hides `ad_banner_holder` (`View.GONE`), removing both the ad and its layout space without interrupting music playback.
+- Offers a **Restore Purchases** flow and direct link to Google Play Subscriptions management (`https://play.google.com/store/account/subscriptions`).
 
-**🎨 CUSTOMIZABLE INTERFACE:**  
-Personalize your music experience with customizable widgets and interface colors. Control your music effortlessly from the status bar, widget, or headphone
-buttons, all tailored to your preferences.
+---
 
-**🌐 OPEN-SOURCE TRANSPARENCY:**  
-Your privacy is a top priority. Fossify Music Player operates completely offline, completely free of ads, and does not request unnecessary permissions. Moreover,
-it is fully open-source, providing you with peace of mind, as you have access to the source code for security and privacy audits.
+## Google Play Console Setup Instructions
 
-Experience music the way it's meant to be – uninterrupted, personalized, and immersive. Download Fossify Music Player now and embark on a musical journey like
-never before.
+To activate live subscriptions for **Music Player: MP3 & Offline**:
 
-➡️ Explore more Fossify apps: https://www.fossify.org<br>
-➡️ Open-Source Code: https://www.github.com/FossifyOrg<br>
-➡️ Join the community on Reddit: https://www.reddit.com/r/Fossify<br>
-➡️ Connect on Telegram: https://t.me/Fossify
+1. **Create Subscription Products**:
+   - Go to **Google Play Console** -> **Monetize** -> **Subscriptions**.
+   - Create Subscription 1: Product ID `premium_monthly`, set base plan price to **PKR 150 / month**.
+   - Create Subscription 2: Product ID `premium_yearly`, set base plan price to **PKR 1,260 / year**.
+   - Activate both subscription products.
 
-<div align="center">
-<img alt="App image" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png" width="30%">
-<img alt="App image" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png" width="30%">
-<img alt="App image" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" width="30%">
-</div>
+2. **Setup Internal Testing & License Testers**:
+   - Go to **Play Console** -> **Setup** -> **License Testing**.
+   - Add tester Gmail accounts to the license testing list to test real Google Play purchase flows without actual charges.
+   - Upload a signed build to an **Internal Testing** track on Google Play Console.
+
+3. **Backend / Token Verification (Optional for Production Scale)**:
+   - For server-validated purchase tokens, connect `BillingHelper` to a backend server endpoint using Google Play Developer API (`purchases.subscriptions.get`).
+
+---
+
+## Advertising Configuration (AdMob)
+
+Ads are integrated using Google Mobile Ads (AdMob) with official test ad unit IDs during development.
+
+To configure production ads:
+1. Open [`app/src/main/AndroidManifest.xml`](file:///D:/Disk%20D/Android%20studio%20projects/Music%20Player/app/src/main/AndroidManifest.xml) and replace `ca-app-pub-3940256099942544~3347511713` with your production AdMob Application ID.
+2. Open [`AdHelper.kt`](file:///D:/Disk%20D/Android%20studio%20projects/Music%20Player/app/src/main/kotlin/org/fossify/musicplayer/helpers/AdHelper.kt) and replace `TEST_BANNER_AD_UNIT_ID` with your production Banner Ad Unit ID.
+3. To disable ads entirely in development or specific builds, set `AdHelper.isAdsEnabled = false`.
+
+---
+
+## License & Attribution
+
+Music Player: MP3 & Offline is derived from Fossify Music Player and is licensed under the [GNU General Public License v3.0 (GPLv3)](file:///D:/Disk%20D/Android%20studio%20projects/Music%20Player/LICENSE).
+
+Original copyright (C) Fossify and contributors. All original license notices, copyright headers, and GPLv3 rights are retained.
+
+---
+
+## Building the App
+
+1. Open the project in **Android Studio**.
+2. Sync Gradle dependencies (`Gradle Sync`).
+3. Build the debug APK via CLI or Android Studio:
+   ```bash
+   ./gradlew assembleFossDebug
+   ```

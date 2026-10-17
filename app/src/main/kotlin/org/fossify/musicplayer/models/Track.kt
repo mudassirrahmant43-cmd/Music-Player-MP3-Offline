@@ -3,7 +3,6 @@ package org.fossify.musicplayer.models
 import android.content.ContentUris
 import android.net.Uri
 import android.provider.MediaStore
-import androidx.media3.common.MediaItem
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -12,8 +11,6 @@ import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getFormattedDuration
 import org.fossify.commons.helpers.AlphanumericComparator
 import org.fossify.commons.helpers.SORT_DESCENDING
-import org.fossify.musicplayer.extensions.sortSafely
-import org.fossify.musicplayer.extensions.toMediaItem
 import org.fossify.musicplayer.helpers.*
 import java.io.File
 import java.io.Serializable
@@ -47,7 +44,7 @@ data class Track(
 
         fun getComparator(sorting: Int) = Comparator<Track> { first, second ->
             var result = when {
-                sorting and PLAYER_SORT_BY_TITLE != 0 -> {
+                (sorting and PLAYER_SORT_BY_TITLE) != 0 -> {
                     when {
                         first.title == MediaStore.UNKNOWN_STRING && second.title != MediaStore.UNKNOWN_STRING -> 1
                         first.title != MediaStore.UNKNOWN_STRING && second.title == MediaStore.UNKNOWN_STRING -> -1
@@ -55,7 +52,7 @@ data class Track(
                     }
                 }
 
-                sorting and PLAYER_SORT_BY_ARTIST_TITLE != 0 -> {
+                (sorting and PLAYER_SORT_BY_ARTIST_TITLE) != 0 -> {
                     when {
                         first.artist == MediaStore.UNKNOWN_STRING && second.artist != MediaStore.UNKNOWN_STRING -> 1
                         first.artist != MediaStore.UNKNOWN_STRING && second.artist == MediaStore.UNKNOWN_STRING -> -1
@@ -63,7 +60,7 @@ data class Track(
                     }
                 }
 
-                sorting and PLAYER_SORT_BY_TRACK_ID != 0 -> {
+                (sorting and PLAYER_SORT_BY_TRACK_ID) != 0 -> {
                     val discComparison = (first.discNumber ?: Int.MAX_VALUE).compareTo(second.discNumber ?: Int.MAX_VALUE)
                     if (discComparison == 0) {
                         first.trackId?.compareTo(second.trackId ?: 0) ?: 0
@@ -71,12 +68,12 @@ data class Track(
                         discComparison
                     }
                 }
-                sorting and PLAYER_SORT_BY_DATE_ADDED != 0 -> first.dateAdded.compareTo(second.dateAdded)
-                sorting and PLAYER_SORT_BY_CUSTOM != 0 -> first.orderInPlaylist.compareTo(second.orderInPlaylist)
+                (sorting and PLAYER_SORT_BY_DATE_ADDED) != 0 -> first.dateAdded.compareTo(second.dateAdded)
+                (sorting and PLAYER_SORT_BY_CUSTOM) != 0 -> first.orderInPlaylist.compareTo(second.orderInPlaylist)
                 else -> first.duration.compareTo(second.duration)
             }
 
-            if (sorting and SORT_DESCENDING != 0) {
+            if ((sorting and SORT_DESCENDING) != 0) {
                 result *= -1
             }
 
@@ -85,8 +82,8 @@ data class Track(
     }
 
     fun getBubbleText(sorting: Int) = when {
-        sorting and PLAYER_SORT_BY_TITLE != 0 -> title
-        sorting and PLAYER_SORT_BY_ARTIST_TITLE != 0 -> artist
+        (sorting and PLAYER_SORT_BY_TITLE) != 0 -> title
+        (sorting and PLAYER_SORT_BY_ARTIST_TITLE) != 0 -> artist
         else -> duration.getFormattedDuration()
     }
 
@@ -98,21 +95,11 @@ data class Track(
         }
     }
 
-    fun getUri(): Uri = if (mediaStoreId == 0L || flags and FLAG_MANUAL_CACHE != 0) {
+    fun getUri(): Uri = if (mediaStoreId == 0L || (flags and FLAG_MANUAL_CACHE) != 0) {
         Uri.fromFile(File(path))
     } else {
         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, mediaStoreId)
     }
 
-    fun isCurrent() = flags and FLAG_IS_CURRENT != 0
-}
-
-fun ArrayList<Track>.sortSafely(sorting: Int) = sortSafely(Track.getComparator(sorting))
-
-fun Collection<Track>.toMediaItems() = map { it.toMediaItem() }
-
-fun Collection<Track>.toMediaItemsFast() = map {
-    MediaItem.Builder()
-        .setMediaId(it.mediaStoreId.toString())
-        .build()
+    fun isCurrent() = (flags and FLAG_IS_CURRENT) != 0
 }

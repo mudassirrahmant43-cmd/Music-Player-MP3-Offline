@@ -7,12 +7,11 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.fossify.commons.helpers.AlphanumericComparator
 import org.fossify.commons.helpers.SORT_DESCENDING
-import org.fossify.musicplayer.extensions.sortSafely
 import org.fossify.musicplayer.helpers.PLAYER_SORT_BY_ARTIST_TITLE
 import org.fossify.musicplayer.helpers.PLAYER_SORT_BY_DATE_ADDED
 import org.fossify.musicplayer.helpers.PLAYER_SORT_BY_TITLE
 
-@Entity(tableName = "albums", indices = [(Index(value = ["id"], unique = true))])
+@Entity(tableName = "albums", indices = [Index(value = ["id"], unique = true)])
 data class Album(
     @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name = "artist") val artist: String,
@@ -26,7 +25,7 @@ data class Album(
     companion object {
         fun getComparator(sorting: Int) = Comparator<Album> { first, second ->
             var result = when {
-                sorting and PLAYER_SORT_BY_TITLE != 0 -> {
+                (sorting and PLAYER_SORT_BY_TITLE) != 0 -> {
                     when {
                         first.title == MediaStore.UNKNOWN_STRING && second.title != MediaStore.UNKNOWN_STRING -> 1
                         first.title != MediaStore.UNKNOWN_STRING && second.title == MediaStore.UNKNOWN_STRING -> -1
@@ -34,7 +33,7 @@ data class Album(
                     }
                 }
 
-                sorting and PLAYER_SORT_BY_ARTIST_TITLE != 0 -> {
+                (sorting and PLAYER_SORT_BY_ARTIST_TITLE) != 0 -> {
                     when {
                         first.artist == MediaStore.UNKNOWN_STRING && second.artist != MediaStore.UNKNOWN_STRING -> 1
                         first.artist != MediaStore.UNKNOWN_STRING && second.artist == MediaStore.UNKNOWN_STRING -> -1
@@ -42,11 +41,11 @@ data class Album(
                     }
                 }
 
-                sorting and PLAYER_SORT_BY_DATE_ADDED != 0 -> first.dateAdded.compareTo(second.dateAdded)
+                (sorting and PLAYER_SORT_BY_DATE_ADDED) != 0 -> first.dateAdded.compareTo(second.dateAdded)
                 else -> first.year.compareTo(second.year)
             }
 
-            if (sorting and SORT_DESCENDING != 0) {
+            if ((sorting and SORT_DESCENDING) != 0) {
                 result *= -1
             }
 
@@ -55,10 +54,8 @@ data class Album(
     }
 
     fun getBubbleText(sorting: Int) = when {
-        sorting and PLAYER_SORT_BY_TITLE != 0 -> title
-        sorting and PLAYER_SORT_BY_ARTIST_TITLE != 0 -> artist
+        (sorting and PLAYER_SORT_BY_TITLE) != 0 -> title
+        (sorting and PLAYER_SORT_BY_ARTIST_TITLE) != 0 -> artist
         else -> year.toString()
     }
 }
-
-fun ArrayList<Album>.sortSafely(sorting: Int) = sortSafely(Album.getComparator(sorting))

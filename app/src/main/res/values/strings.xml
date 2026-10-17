@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Music Player</string>
+    <string name="app_launcher_name">Music Player: MP3 &amp; Offline</string>
     <string name="playlist_empty">Your playlist is empty</string>
     <string name="rename_song">Rename song</string>
     <string name="rename_song_error">An error occurred during the renaming</string>
@@ -92,4 +92,24 @@
         Haven't found some strings? There's more at
         https://github.com/FossifyOrg/Commons/tree/master/commons/src/main/res
     -->
+    <!-- Premium Subscriptions -->
+    <string name="remove_ads_premium">Remove Ads / Premium</string>
+    <string name="unlock_premium">Unlock Premium</string>
+    <string name="unlock_premium_desc">Enjoy your music without banner advertisements.</string>
+    <string name="benefit_no_ads">✓ No bottom banner advertisements</string>
+    <string name="benefit_uninterrupted">✓ Uninterrupted offline music player access</string>
+    <string name="benefit_all_features">✓ Full access to all music features &amp; equalizer</string>
+    <string name="benefit_support_dev">✓ Support continued app development</string>
+    <string name="plan_monthly">Monthly Plan</string>
+    <string name="plan_monthly_price">PKR 150 / month</string>
+    <string name="plan_yearly">Yearly Plan (SAVE 30%)</string>
+    <string name="plan_yearly_price">PKR 1,260 / year (PKR 105/mo)</string>
+    <string name="plan_yearly_savings">30% cheaper than paying monthly</string>
+    <string name="btn_subscribe">Subscribe Now</string>
+    <string name="btn_restore_purchases">Restore Purchases</string>
+    <string name="btn_manage_subscription">Manage Subscription</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="subscription_terms_notice">Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in Google Play Store settings.</string>
+    <string name="premium_active">Premium Active - Banner Ads Removed</string>
 </resources>

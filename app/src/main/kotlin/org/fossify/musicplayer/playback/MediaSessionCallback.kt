@@ -43,11 +43,11 @@ internal fun PlaybackService.getMediaSessionCallback() = object : MediaLibrarySe
         }
     }
 
-    override fun onConnectAsync(
+    override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
-    ): ListenableFuture<MediaSession.ConnectionResult> {
-        val resultBuilder = MediaSession.ConnectionResult.AcceptedResultBuilder(session, controller)
+    ): MediaSession.ConnectionResult {
+        val resultBuilder = MediaSession.ConnectionResult.AcceptedResultBuilder(session)
         if (controller.isTrusted) {
             val availableSessionCommands = DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
             for (command in customCommands) {
@@ -56,7 +56,7 @@ internal fun PlaybackService.getMediaSessionCallback() = object : MediaLibrarySe
             resultBuilder.setAvailableSessionCommands(availableSessionCommands.build())
         }
 
-        return Futures.immediateFuture(resultBuilder.build())
+        return resultBuilder.build()
     }
 
     override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Pemain Muzik</string>
+    <string name="app_launcher_name">Music Player: MP3 &amp; Offline</string>
     <string name="playlist_empty">Senarai main anda kosong</string>
     <string name="rename_song">Namakan semula lagu</string>
     <string name="rename_song_error">Ralat berlaku semasa proses penamaan</string>

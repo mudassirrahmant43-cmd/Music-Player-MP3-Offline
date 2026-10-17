@@ -13,6 +13,7 @@ import org.fossify.musicplayer.databinding.ActivitySettingsBinding
 import org.fossify.musicplayer.dialogs.ManageVisibleTabsDialog
 import org.fossify.musicplayer.extensions.config
 import org.fossify.musicplayer.extensions.sendCommand
+import org.fossify.musicplayer.helpers.PremiumManager
 import org.fossify.musicplayer.helpers.SHOW_FILENAME_ALWAYS
 import org.fossify.musicplayer.helpers.SHOW_FILENAME_IF_UNAVAILABLE
 import org.fossify.musicplayer.helpers.SHOW_FILENAME_NEVER
@@ -44,6 +45,7 @@ class SettingsActivity : SimpleControllerActivity() {
         setupManageShownTabs()
         setupSwapPrevNext()
         setupReplaceTitle()
+        setupPremium()
         updateTextColors(binding.settingsNestedScrollview)
 
         arrayOf(binding.settingsColorCustomizationSectionLabel, binding.settingsGeneralSettingsLabel).forEach {
@@ -134,6 +136,18 @@ class SettingsActivity : SimpleControllerActivity() {
     private fun setupManageExcludedFolders() {
         binding.settingsManageExcludedFoldersHolder.setOnClickListener {
             startActivity(Intent(this, ExcludedFoldersActivity::class.java))
+        }
+    }
+
+    private fun setupPremium() = binding.apply {
+        val isPremium = PremiumManager.isPremiumActive(this@SettingsActivity)
+        if (isPremium) {
+            settingsPremiumValue.text = getString(R.string.premium_active)
+        } else {
+            settingsPremiumValue.text = getString(R.string.unlock_premium_desc)
+        }
+        settingsPremiumHolder.setOnClickListener {
+            startActivity(Intent(this@SettingsActivity, PremiumActivity::class.java))
         }
     }
 }

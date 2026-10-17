@@ -54,6 +54,7 @@ class MainActivity : SimpleMusicActivity() {
         refreshMenuItems()
         setupEdgeToEdge(
             padBottomImeAndSystem = buildList {
+                add(binding.adBannerHolder)
                 add(binding.mainTabsHolder)
                 if (getVisibleTabs().size == 1) {
                     add(binding.currentTrackBar.root)
@@ -63,6 +64,7 @@ class MainActivity : SimpleMusicActivity() {
         storeStateVariables()
         setupTabs()
         setupCurrentTrackBar(binding.currentTrackBar.root)
+        AdHelper.setupBannerAd(this, binding.adBannerHolder)
 
         handlePermission(getPermissionToRequest()) {
             if (it) {
@@ -104,6 +106,7 @@ class MainActivity : SimpleMusicActivity() {
         if (storedExcludedFolders != config.excludedFolders.hashCode()) {
             refreshAllFragments()
         }
+        AdHelper.setupBannerAd(this, binding.adBannerHolder)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -168,6 +171,7 @@ class MainActivity : SimpleMusicActivity() {
                 R.id.create_playlist_from_folder -> createPlaylistFromFolder()
                 R.id.import_playlist -> tryImportPlaylist()
                 R.id.equalizer -> launchEqualizer()
+                R.id.remove_ads_premium -> launchPremium()
                 R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                 R.id.settings -> launchSettings()
                 R.id.about -> launchAbout()
@@ -522,6 +526,10 @@ class MainActivity : SimpleMusicActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun shouldRefreshFragments(event: Events.RefreshFragments) {
         refreshAllFragments()
+    }
+
+    private fun launchPremium() {
+        startActivity(Intent(this, PremiumActivity::class.java))
     }
 
     private fun launchEqualizer() {

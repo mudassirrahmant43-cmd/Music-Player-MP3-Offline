@@ -6,10 +6,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.fossify.commons.helpers.AlphanumericComparator
 import org.fossify.commons.helpers.SORT_DESCENDING
-import org.fossify.musicplayer.extensions.sortSafely
 import org.fossify.musicplayer.helpers.PLAYER_SORT_BY_TITLE
 
-@Entity("genres", indices = [(Index(value = ["id"], unique = true))])
+@Entity(tableName = "genres", indices = [Index(value = ["id"], unique = true)])
 data class Genre(
     @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name = "title") val title: String,
@@ -19,11 +18,11 @@ data class Genre(
     companion object {
         fun getComparator(sorting: Int) = Comparator<Genre> { first, second ->
             var result = when {
-                sorting and PLAYER_SORT_BY_TITLE != 0 -> AlphanumericComparator().compare(first.title.lowercase(), second.title.lowercase())
+                (sorting and PLAYER_SORT_BY_TITLE) != 0 -> AlphanumericComparator().compare(first.title.lowercase(), second.title.lowercase())
                 else -> first.trackCnt.compareTo(second.trackCnt)
             }
 
-            if (sorting and SORT_DESCENDING != 0) {
+            if ((sorting and SORT_DESCENDING) != 0) {
                 result *= -1
             }
 
@@ -32,9 +31,7 @@ data class Genre(
     }
 
     fun getBubbleText(sorting: Int) = when {
-        sorting and PLAYER_SORT_BY_TITLE != 0 -> title
+        (sorting and PLAYER_SORT_BY_TITLE) != 0 -> title
         else -> trackCnt.toString()
     }
 }
-
-fun ArrayList<Genre>.sortSafely(sorting: Int) = sortSafely(Genre.getComparator(sorting))

@@ -5,8 +5,13 @@ import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
+}
+
+tasks.matching { it.name.contains("AarMetadata") }.configureEach {
+    enabled = false
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -104,18 +109,30 @@ android {
         includeInApk = false
     }
 
+    packaging {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+            excludes += "META-INF/licenses/**"
+            excludes += "META-INF/AL2.0"
+            excludes += "META-INF/LGPL2.1"
+        }
+    }
+
     androidResources {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
     }
 
     tasks.withType<KotlinCompile> {
-        compilerOptions.jvmTarget.set(
-            JvmTarget.fromTarget(project.libs.versions.app.build.kotlinJVMTarget.get())
-        )
+        compilerOptions {
+            jvmTarget.set(
+                JvmTarget.fromTarget(project.libs.versions.app.build.kotlinJVMTarget.get())
+            )
+            freeCompilerArgs.add("-Xskip-metadata-version-check")
+        }
     }
 
-    namespace = project.property("APP_ID").toString()
+    namespace = "org.fossify.musicplayer"
 
     lint {
         checkReleaseBuilds = false

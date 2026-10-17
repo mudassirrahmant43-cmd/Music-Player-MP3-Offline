@@ -53,7 +53,7 @@ class SimpleMusicPlayer(private val exoPlayer: ExoPlayer) : ForwardingPlayer(exo
 
     override fun seekToPreviousMediaItem() = seekToPrevious()
 
-    override fun getAudioSessionId() = exoPlayer.audioSessionId
+    fun getAudioSessionId() = exoPlayer.audioSessionId
 
     fun setSkipSilence(skipSilence: Boolean) {
         exoPlayer.skipSilenceEnabled = skipSilence
@@ -66,7 +66,7 @@ class SimpleMusicPlayer(private val exoPlayer: ExoPlayer) : ForwardingPlayer(exo
     @Deprecated("Should be rewritten when https://github.com/androidx/media/issues/325 is implemented.")
     fun setShuffleIndices(indices: IntArray) {
         val shuffleOrder = DefaultShuffleOrder(indices, DEFAULT_SHUFFLE_ORDER_SEED)
-        exoPlayer.shuffleOrder = shuffleOrder
+        exoPlayer.setShuffleOrder(shuffleOrder)
     }
 
     @Deprecated("Should be rewritten when https://github.com/androidx/media/issues/325 is implemented.")
@@ -92,9 +92,11 @@ class SimpleMusicPlayer(private val exoPlayer: ExoPlayer) : ForwardingPlayer(exo
             val shuffledCurrentIndex = shuffledIndices.indexOf(itemIndex)
             val shuffledNewIndex = shuffledIndices.indexOf(nextMediaItemIndex)
             shuffledIndices.move(currentIndex = shuffledCurrentIndex, newIndex = shuffledNewIndex)
-            exoPlayer.shuffleOrder = DefaultShuffleOrder(
-                shuffledIndices.toIntArray(),
-                DEFAULT_SHUFFLE_ORDER_SEED
+            exoPlayer.setShuffleOrder(
+                DefaultShuffleOrder(
+                    shuffledIndices.toIntArray(),
+                    DEFAULT_SHUFFLE_ORDER_SEED
+                )
             )
         }
     }
